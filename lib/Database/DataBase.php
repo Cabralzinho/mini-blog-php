@@ -5,9 +5,9 @@ class DataBase
     public static function getConnection()
     {
         try {
-            $conexao = new PDO("mysql:host=127.0.0.1;dbname=user", "root", "");
+            $connection = new PDO("mysql:host=127.0.0.1;dbname=tela_login", "root", "");
 
-            return $conexao;
+            return $connection;
         } catch (PDOException $error) {
             echo "Algo deu errado: {$error->getMessage()}";
         }
