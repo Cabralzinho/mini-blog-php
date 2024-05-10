@@ -19,7 +19,7 @@ class LoginController
         try {
             FormModel::loginUser();
 
-            echo "Logado com sucesso meu gostoso";
+            return header("Location: ?page=home");
         } catch (Exception $error) {
             $error = $error->getMessage();
             return header("Location: ?error=$error");

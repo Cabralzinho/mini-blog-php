@@ -7,6 +7,7 @@ require "../app/Model/FormModel.php";
 require "../app/Controller/LoginController.php";
 require "../app/Controller/ErrorController.php";
 require "../app/Controller/RegisterController.php";
+require "../app/Controller/HomeController.php";
 
 require "../lib/Database/DataBase.php";
 
