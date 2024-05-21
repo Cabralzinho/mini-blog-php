@@ -17,7 +17,12 @@ class LoginController
     public function login()
     {
         try {
-            FormModel::loginUser();
+            $service = new LoginService(
+                $_POST["email"],
+                $_POST["password"]
+            );
+
+            $service->login();
 
             return header("Location: ?page=home");
         } catch (Exception $error) {

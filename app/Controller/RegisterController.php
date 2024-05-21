@@ -21,7 +21,13 @@ class RegisterController
     public function register()
     {
         try {
-            FormModel::registerUser();
+            $service = new RegisterService(
+                $_POST["name"],
+                $_POST["email"],
+                $_POST["password"]
+            );
+
+            $service->register();
 
             return header("Location: /");
         } catch (Exception $error) {
