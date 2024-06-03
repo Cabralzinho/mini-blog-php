@@ -2,6 +2,10 @@
 
 class LoginController
 {
+    public function __construct() {
+        session_start();
+    }
+    
     public function index()
     {
         $loader = new \Twig\Loader\FilesystemLoader('../app/View');

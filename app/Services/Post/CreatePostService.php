@@ -2,7 +2,7 @@
 
 class CreatePostService
 {
-    public function __construct(private string $title, private string $message)
+    public function __construct(private string $title, private string $content, private int $userId)
     {
         $this->validateData();
     }
@@ -10,7 +10,7 @@ class CreatePostService
     public function create()
     {
         try {
-            PostModel::createPost($this->title, $this->message);
+            PostModel::createPost($this->title, $this->content, $this->userId);
         }
         catch (Exception $error) {
             throw new Exception("Erro ao se comunicar com o banco de dados: $error");
@@ -20,7 +20,7 @@ class CreatePostService
     private function validateData()
     {
         $this->validateTitle();
-        $this->validateMessage();
+        $this->validateContent();
     }
 
     private function validateTitle()
@@ -34,12 +34,12 @@ class CreatePostService
         }
     }
 
-    private function validateMessage() {
-        if (empty($this->message)) {
+    private function validateContent() {
+        if (empty($this->content)) {
             throw new Exception("A mensagem não pode estar vazia.");
         }
 
-        if (strlen($this->message) > 250) {
+        if (strlen($this->content) > 250) {
             throw new Exception("A mensagem não pode ultrapassar 250 caracteres");
         }
     }

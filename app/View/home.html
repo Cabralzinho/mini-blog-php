@@ -16,16 +16,13 @@
 </head>
 
 <body>
-    <main class="vw-100 vh-100 d-flex flex-column align-items-center">
+    <main class="w-100 h-100 d-flex flex-column align-items-center">
         <header class="navbar navbar-expand-lg w-75">
             <nav class="container-fluid p-0">
-                <h2>Blog Php</h2>
+                <h1 class="h3">Blog Php</h1>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="" class="nav-link link-dark">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="" class="nav-link link-dark">Options</a>
+                        <a href="?page=home&method=destroy" class="nav-link link-dark">sair da conta</a>
                     </li>
                 </ul>
             </nav>
@@ -37,12 +34,12 @@
 
         <section class="w-75 mt-3">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-4">Postagem</h3>
+                <h2 class="mb-4">Postagem</h2>
                 <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#createPost">
                     Crie um post
                 </button>
 
-                <div class="modal fade" id="createPost" tabindex="-1" data-bs-backdrop="static">
+                <div class="modal fade" id="createPost" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -59,14 +56,14 @@
                                     </div>
                                     <div class="d-flex flex-column mt-3">
                                         <label class="form-label">Texto</label>
-                                        <input class="form-control" name="message" type="text"
+                                        <input class="form-control" name="content" type="text"
                                             placeholder="Escreve sua publicação">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button class="btn btn-close btn-secondary"
                                         data-bs-dismiss="modal">Cancelar</button>
-                                    <button class="btn btn-primary" id="showToast" type="submit">Publicar</button>
+                                    <button class="btn btn-primary" type="submit">Publicar</button>
                                 </div>
                             </form>
                         </div>
@@ -74,19 +71,25 @@
                 </div>
             </div>
 
+            {% if not posts %}
+            <p class="card card-body mt-4">Nenhum post postado!</p>
+            {% endif %}
+
             {% for post in posts %}
             <div class="card bg-light mb-3">
-                <div class="card-body d-flex justify-content-between">
-                    <h6>Postado por: Thiago</h6>
-                    <div class="d-flex align-items-center justify-content-center">
-                        <h6 class="mr-3">Postado em: {{post.created_at}}</h6>
-                        <a href="?page=home&method=delete&id={{post.id}}" class="h6">
+                <div class="card-body d-flex justify-content-between text-muted font-weight-normal">
+                    <small>Postado por: {{post.author.name}}</small>
+                    <div class="d-flex justify-content-center">
+                        <small class="mr-3">Postado em: {{post.created_at}}</small>
+                        {% if session["id"] == post.author.id %}
+                        <a href="?page=home&method=delete&id={{post.id}}" class="">
                             <i class="fa fa-trash text-danger" aria-hidden="true"></i>
                         </a>
-                        <a href="" class="ml-3 h6" data-bs-toggle="modal" data-bs-target="#editPost{{post.id}}">
+                        <a href="" class="ml-3" data-bs-toggle="modal" data-bs-target="#editPost{{post.id}}">
                             <i class="fa fa-edit" aria-hidden="true"></i>
                         </a>
-                        <div class="modal fade" id="editPost{{post.id}}" data-bs-backdrop="static" tabindex="-1">
+                        {% endif %}
+                        <div class="modal fade" id="editPost{{post.id}}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header d-flex align-items-center">
@@ -104,8 +107,8 @@
                                             </div>
                                             <div class="mt-3">
                                                 <label class="form-text">Mensagem do comentario</label>
-                                                <input class="form-control" value="{{post.message}}"
-                                                    placeholder="Escreva a mensagem" type="text" name="message">
+                                                <input class="form-control" value="{{post.content}}"
+                                                    placeholder="Escreva a mensagem" type="text" name="content">
                                             </div>
                                             <div class="modal-footer">
                                                 <button class="btn btn-close btn-secondary"
@@ -119,17 +122,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card px-3 py-2 pb-3">
                     <h4 class="card-title">{{post.title}}</h4>
-                    <p class="card-text">{{post.message}}</p>
+                    <p class="card-text text-muted">{{post.content}}</p>
                 </div>
                 <div class="card-footer d-flex bg-light justify-content-between">
-                    <a href="" class="text-decoration-none" data-bs-toggle="collapse" data-bs-target="#callapsePost{{post.id}}">Ver os 99 comentarios</a>
-                    <a href="" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#postModal">
+                    <a href="" class="text-decoration-none" data-bs-toggle="collapse"
+                        data-bs-target="#collapsePost{{post.id}}">Ver os {{post.comments|length}} comentarios</a>
+                    <a href="" class="text-decoration-none" data-bs-toggle="modal"
+                        data-bs-target="#postModal{{post.id}}">
                         Comente no post
                     </a>
 
-                    <div class="modal fade" id="postModal" data-bs-backdrop="static" tabindex="-1">
+                    <div class="modal fade" id="postModal{{post.id}}" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header d-flex align-items-center">
@@ -139,7 +144,7 @@
                                         </a>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="?page=home&method=comment" method="post">
+                                    <form action="?page=home&method=comment&postId={{post.id}}" method="post">
                                         <div class="">
                                             <label class="form-text">Título do comentário</label>
                                             <input class="form-control" placeholder="Escreva um título" type="text"
@@ -148,7 +153,7 @@
                                         <div class="mt-3">
                                             <label class="form-text">Mensagem do comentario</label>
                                             <input class="form-control" placeholder="Escreva a mensagem" type="text"
-                                                name="messageComment">
+                                                name="contentComment">
                                         </div>
                                         <div class="modal-footer">
                                             <button class="btn btn-close btn-secondary"
@@ -161,19 +166,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="collapse" id="callapsePost{{post.id}}">
-                    {% for comment in comments %}
-                    <div class="card card-body">
-                      <div class="d-flex justify-content-between align-items-center h6">
-                        <p>Comentado por: Thiago</p>
-                        <span>Comentado em: {{comment.created_at}}</span>
-                      </div>
-                      <div class="">
-                        <p>{{comment.message}}</p>
-                      </div>
+                <div class="collapse" id="collapsePost{{post.id}}">
+                    {% for comment in post.comments %}
+                    <div class="card px-3 py-2">
+                        <div class="d-flex justify-content-between text-muted">
+                            <small>Comentado por: {{comment.author_name}}</small>
+                            <small>Comentado em: {{comment.comment_created_at}}</small>
+                        </div>
+                        <div class="mt-2">
+                            <h4 class="card-title">{{comment.comment_title}}</h4>
+                            <p class="card-text text-muted">{{comment.comment_content}}</p>
+                        </div>
                     </div>
                     {% endfor %}
-                  </div>
+                </div>
             </div>
             {% endfor %}
         </section>

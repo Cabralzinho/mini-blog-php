@@ -8,10 +8,9 @@ class LoginService
     }
 
     public function login()
-    {
+    {    
         $user = UserModel::findUserByEmail($this->email);
-
-
+        
         if (empty($user)) {
             throw new Exception("Usuário não existe.");
         }
@@ -21,6 +20,9 @@ class LoginService
         if (!$isPasswordMatch) {
             throw new Exception("A senha não coincide.");
         };
+
+        $_SESSION["name"] = $user["name"];
+        $_SESSION["id"] = $user["id"];
     }
 
     private function validateData()

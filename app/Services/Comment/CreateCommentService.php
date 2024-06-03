@@ -2,15 +2,24 @@
 
 class CreateCommentService
 {
-    public function __construct(private string $title, private string $message)
-    {
+    public function __construct(
+        private string $title,
+        private string $content,
+        private int $post_id,
+        private int $creator_id
+    ) {
         $this->validateData();
     }
 
     public function create()
     {
         try {
-            PostModel::createComment($this->title, $this->message);
+            CommentModel::createComment(
+                $this->title,
+                $this->content,
+                $this->post_id,
+                $this->creator_id
+            );
         } catch (Exception $error) {
             throw new Exception($error->getMessage());
         }
@@ -19,7 +28,7 @@ class CreateCommentService
     private function validateData()
     {
         $this->validateTitle();
-        $this->validateMessage();
+        $this->validateContent();
     }
 
     private function validateTitle()
@@ -33,13 +42,13 @@ class CreateCommentService
         }
     }
 
-    private function validateMessage()
+    private function validateContent()
     {
-        if (empty($this->message)) {
+        if (empty($this->content)) {
             throw new Exception("O campo mensagem não pode estar vazio");
         }
 
-        if (strlen($this->message) > 1000) {
+        if (strlen($this->content) > 1000) {
             throw new Exception("O campo mensagem não pode ultrapassar 1000 caracteres");
         }
     }

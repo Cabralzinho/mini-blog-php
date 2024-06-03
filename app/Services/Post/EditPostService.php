@@ -5,7 +5,7 @@ class EditPostService
     public function __construct(
         private string $id,
         private string $title,
-        private string $message
+        private string $content
     ) {
         $this->validateData();
     }
@@ -13,13 +13,13 @@ class EditPostService
     private function validateData()
     {
         $this->validateTitle();
-        $this->validateMessage();
+        $this->validateContent();
     }
 
     public function edit()
     {
         try {
-            PostModel::editPost($this->id, $this->title, $this->message);
+            PostModel::editPost($this->id, $this->title, $this->content);
         } catch (Exception $error) {
             throw new Exception($error->getMessage());
         }
@@ -36,13 +36,13 @@ class EditPostService
         }
     }
 
-    private function validateMessage()
+    private function validateContent()
     {
-        if (empty($this->message)) {
+        if (empty($this->content)) {
             throw new Exception("O campo mensagem não pode estar vazio.");
         }
 
-        if (strlen($this->message) > 1000) {
+        if (strlen($this->content) > 1000) {
             throw new Exception("O campo não pode ultrapassar 1000 caracteres");
         }
     }

@@ -2,15 +2,16 @@
 
 class PostModel
 {
-    public static function createPost(string $title, string $message)
+    public static function createPost(string $title, string $content, int $userId)
     {
         $connection = Database::getConnection();
 
-        $query = "INSERT INTO post(title, message)VALUES(:title, :message)";
+        $query = "INSERT INTO post(title, content, user_id)VALUES(:title, :content, :user_id)";
         $query = $connection->prepare($query);
         $query->execute([
             ":title" => $title,
-            ":message" => $message,
+            ":content" => $content,
+            ":user_id" => $userId
         ]);
     }
 
@@ -25,53 +26,41 @@ class PostModel
         ]);
     }
 
-    public static function editPost($id, $title, $message)
+    public static function editPost($id, $title, $content)
     {
         $connection = DataBase::getConnection();
 
-        $query = "UPDATE post SET title = :title, message = :message WHERE id = :id";
+        $query = "UPDATE post SET title = :title, content = :content WHERE id = :id";
         $query = $connection->prepare($query);
         $query->execute([
             ":id" => $id,
             ":title" => $title,
-            ":message" => $message,
+            ":content" => $content,
         ]);
     }
 
-    public static function viewPost()
+    public static function getPosts()
     {
         $connection = DataBase::getConnection();
 
-        $query = "SELECT * FROM post ORDER BY id DESC";
+        $query = "SELECT
+            u.name AS author_name,
+            u.id AS author_id,
+            p.id,
+            p.title,
+            p.content,
+            p.created_at
+        FROM
+            user u
+        RIGHT JOIN post p ON
+            u.id = p.user_id
+        ORDER BY
+            p.id DESC";
         $query = $connection->prepare($query);
         $query->execute();
 
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
-    }
-
-    public static function viewComment() {
-        $connection = DataBase::getConnection();
-        
-        $query = "SELECT * FROM comments ORDER BY id DESC";
-        $query = $connection->prepare($query);
-        $query->execute();
-
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
-    }
-
-    public static function createComment(string $title, string $message) {
-        $connection = DataBase::getConnection();
-
-        $query = "INSERT INTO comments(post_id, title, message)VALUES(:post_id, :title, :message)";
-        $query = $connection->prepare($query);
-        $query->execute([
-            ":post_id" => 1,
-            ":title" => $title,
-            ":message"=> $message,
-        ]);
     }
 }
