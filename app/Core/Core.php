@@ -2,19 +2,22 @@
 
 class Core
 {
+    public function __construct()
+    {
+        session_start();
+    }
+
     public function start($urlGet)
     {
+        $action = "index";
+        $controller = "LoginController";
+
         if (isset($urlGet["method"])) {
             $action = $urlGet["method"];
-        }
-        else {
-            $action = "index";
         }
 
         if (isset($urlGet["page"])) {
             $controller = ucfirst($urlGet["page"] . "Controller");
-        } else {
-            $controller = "LoginController";
         }
 
         if (!class_exists($controller)) {

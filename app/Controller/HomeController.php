@@ -2,11 +2,6 @@
 
 class HomeController
 {
-    public function __construct()
-    {
-        session_start();
-    }
-
     public function index()
     {
         try {
@@ -36,8 +31,6 @@ class HomeController
 
     public function destroy()
     {
-        session_start();
-
         session_destroy();
 
         header("Location: /");
